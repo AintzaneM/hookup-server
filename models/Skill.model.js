@@ -1,16 +1,13 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 
-const skillSchema = new Schema(
-  {
-    name: {
-      type: String,
-      
-      
-    },
-    description: {
-      type: String,
-      
-    },
+
+
+
+const skillSchema = new Schema({
+    title: String,
+    description: String,  
+    experiences: [{type: Schema.Types.ObjectId, ref: "Experience"}]
   },
 
   {
@@ -19,6 +16,5 @@ const skillSchema = new Schema(
   }
 );
 
-const User = model("Skill", skillSchema);
+module.exports = model("Skill", skillSchema);
 
-module.exports = User;
