@@ -25,4 +25,4 @@ const experienceSchema = new Schema(
   }
 );
 
-module.exports = model("Experiencie", experienceSchema);
+module.exports = model("Experience", experienceSchema);
