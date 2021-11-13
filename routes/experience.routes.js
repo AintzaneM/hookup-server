@@ -4,16 +4,18 @@ const mongoose = require('mongoose');
 
 const Experience = require("../models/Experience.model ");
 const Skill = require('../models/Skill.model');
+const isLoggedIn= require("../middleware/isLoggedIn");
 
 
 // Create a new experience in DB
-router.post("/experience", (req, res, next) => {
-    const {namePosition, description, skillID } = req.body;
+router.post("/experience", isLoggedIn, (req, res, next) => {
+    const {namePosition, description, skill:skillID } = req.body;
 
     Experience.create({
         namePosition,
         description,
-        skill: skillID
+        skill: skillID,
+        owner: req.user._id
     })
 
     .then(newExperienceFromDB => {
@@ -26,8 +28,16 @@ router.post("/experience", (req, res, next) => {
     .catch(err => res.json(err))
 })
 
+// Get all experiences from DB
+router.get('/experience',isLoggedIn, (req, res, next) => {
+  Experience.find()
+    .populate('skill')
+    .then(allTheExperiencess => res.json(allTheExperiencess))
+    .catch(err => res.json(err));
+});
+
 // Get a specific experience from DB
-router.get('/experience/:experienceId', (req, res, next) => {
+router.get('/experience/:experienceId', isLoggedIn, (req, res, next) => {
     const {experienceId} = req.params;
     Experience.findById(experienceId)
     .then(experience => res.json(experience))
@@ -35,7 +45,7 @@ router.get('/experience/:experienceId', (req, res, next) => {
 })
 
 // Edit a specific experience from DB
-router.put('/experience/:experienceId', (req, res, next) => {
+router.put('/experience/:experienceId', isLoggedIn, (req, res, next) => {
   const { experienceId } = req.params;
  
   if (!mongoose.Types.ObjectId.isValid(experienceId)) {
@@ -49,7 +59,7 @@ router.put('/experience/:experienceId', (req, res, next) => {
 });
 
 // Delete a specific experience from DB
-router.delete('/experience/:experienceId', (req, res, next) => {
+router.delete('/experience/:experienceId', isLoggedIn, (req, res, next) => {
   const { experienceId } = req.params;
  
   if (!mongoose.Types.ObjectId.isValid(experienceId)) {
