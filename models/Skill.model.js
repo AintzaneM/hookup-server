@@ -7,7 +7,8 @@ const { Schema, model } = mongoose;
 const skillSchema = new Schema({
     title: String,
     description: String,  
-    experiences: [{type: Schema.Types.ObjectId, ref: "Experience"}]
+    experiencesList: [{type: Schema.Types.ObjectId, ref: "Experience"}]
+
   },
 
   {

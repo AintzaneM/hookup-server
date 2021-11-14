@@ -8,19 +8,19 @@ const isLoggedIn= require("../middleware/isLoggedIn");
 
 
 // Create a new experience in DB
-router.post("/experience", isLoggedIn, (req, res, next) => {
-    const {namePosition, description, skill:skillID } = req.body;
+router.post("/experiences", (req, res, next) => {
+    const {namePosition, description, skill:skillId } = req.body;
 
     Experience.create({
         namePosition,
         description,
-        skill: skillID,
-        owner: req.user._id
+        skill: skillId,
+        // owner: req.user._id
     })
 
-    .then(newExperienceFromDB => {
-        return Skill.findByIdAndUpdate(skillID, {
-          $push: { experiences: newExperienceFromDB._id }
+    .then((newExperienceFromDB) => {
+        return Skill.findByIdAndUpdate(skillId, {
+          $push: { experiencesList: newExperienceFromDB._id }
         });
       })
 
@@ -28,8 +28,8 @@ router.post("/experience", isLoggedIn, (req, res, next) => {
     .catch(err => res.json(err))
 })
 
-// Get all experiences from DB
-router.get('/experience',isLoggedIn, (req, res, next) => {
+//Get all experiences from DB
+router.get('/experiences', (req, res, next) => {
   Experience.find()
     .populate('skill')
     .then(allTheExperiencess => res.json(allTheExperiencess))
@@ -37,15 +37,15 @@ router.get('/experience',isLoggedIn, (req, res, next) => {
 });
 
 // Get a specific experience from DB
-router.get('/experience/:experienceId', isLoggedIn, (req, res, next) => {
+router.get('/skills/:skillId/experiences/:experienceId', (req, res, next) => {
     const {experienceId} = req.params;
     Experience.findById(experienceId)
-    .then(experience => res.json(experience))
-    .catch(err => res.json(err));
+    .then((experience) => res.json(experience))
+    .catch((err) => res.json(err));
 })
 
 // Edit a specific experience from DB
-router.put('/experience/:experienceId', isLoggedIn, (req, res, next) => {
+router.put('/skills/:skillId/experiences/:experienceId', isLoggedIn, (req, res, next) => {
   const { experienceId } = req.params;
  
   if (!mongoose.Types.ObjectId.isValid(experienceId)) {
@@ -59,7 +59,7 @@ router.put('/experience/:experienceId', isLoggedIn, (req, res, next) => {
 });
 
 // Delete a specific experience from DB
-router.delete('/experience/:experienceId', isLoggedIn, (req, res, next) => {
+router.delete('/skills/:skillId/experiences/:experienceId', isLoggedIn, (req, res, next) => {
   const { experienceId } = req.params;
  
   if (!mongoose.Types.ObjectId.isValid(experienceId)) {
