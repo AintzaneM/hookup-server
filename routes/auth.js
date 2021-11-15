@@ -20,7 +20,7 @@ router.get("/loggedin", (req, res) => {
 
 });
 
-router.post("/signup", isLoggedOut, (req, res) => {
+router.post("/signup",  (req, res) => {
   const { email, password } = req.body;
 
   if (!email) {
@@ -85,7 +85,7 @@ router.post("/signup", isLoggedOut, (req, res) => {
   });
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isLoggedOut, (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email) {
@@ -129,7 +129,7 @@ router.post("/login", (req, res, next) => {
     });
 });
 
-router.get("/logout", (req, res) => {
+router.get("/logout", isLoggedIn, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ errorMessage: err.message });
