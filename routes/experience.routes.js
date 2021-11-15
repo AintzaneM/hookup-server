@@ -10,7 +10,7 @@ const isLoggedOut= require("../middleware/isLoggedOut");
 
 // Create a new experience in DB
 router.post("/experiences", (req, res, next) => {
-  const { namePosition, description, skill: skillId, } = req.body;
+  const { namePosition, description, skill: skillId, owner } = req.body;
 
   Experience.create({
     namePosition,
@@ -21,7 +21,7 @@ router.post("/experiences", (req, res, next) => {
 
    .then((newExperienceFromDB) => {
      
-      return Skill.findByIdAndUpdate(skillId, {
+      return Skill.findByIdAndUpdate(skillId,  {
         $push: { experiencesList: newExperienceFromDB._id }
         
       });
