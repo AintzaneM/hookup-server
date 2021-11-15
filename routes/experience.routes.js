@@ -5,17 +5,18 @@ const mongoose = require('mongoose');
 const Experience = require("../models/Experience.model ");
 const Skill = require('../models/Skill.model');
 const isLoggedIn= require("../middleware/isLoggedIn");
+const isLoggedOut= require("../middleware/isLoggedOut");
 
 
 // Create a new experience in DB
-router.post("/experiences", (req, res, next) => {
-    const {namePosition, description, skill:skillId } = req.body;
+router.post("/experiences",  (req, res, next) => {
+    const {namePosition, description, skill:skillId} = req.body;
 
     Experience.create({
         namePosition,
         description,
         skill: skillId,
-        // owner: req.user._id
+        owner: req.user._id
     })
 
     .then((newExperienceFromDB) => {
@@ -40,12 +41,12 @@ router.get('/experiences', (req, res, next) => {
 router.get('/skills/:skillId/experiences/:experienceId', (req, res, next) => {
     const {experienceId} = req.params;
     Experience.findById(experienceId)
-    .then((experience) => res.json(experience))
+    .then((experience) => res.status(200).json(experience))
     .catch((err) => res.json(err));
 })
 
 // Edit a specific experience from DB
-router.put('/skills/:skillId/experiences/:experienceId', isLoggedIn, (req, res, next) => {
+router.put('/skills/:skillId/experiences/:experienceId', (req, res, next) => {
   const { experienceId } = req.params;
  
   if (!mongoose.Types.ObjectId.isValid(experienceId)) {
@@ -54,12 +55,12 @@ router.put('/skills/:skillId/experiences/:experienceId', isLoggedIn, (req, res, 
   }
  
   Experience.findByIdAndUpdate(experienceId, req.body)
-    .then(() => res.json({ message: `Experience with ${experienceId} is updated successfully.` }))
+    .then(() => res.status(200).json({ message: `Experience with ${experienceId} is updated successfully.` }))
     .catch(err => res.json(err));
 });
 
 // Delete a specific experience from DB
-router.delete('/skills/:skillId/experiences/:experienceId', isLoggedIn, (req, res, next) => {
+router.delete('/skills/:skillId/experiences/:experienceId', (req, res, next) => {
   const { experienceId } = req.params;
  
   if (!mongoose.Types.ObjectId.isValid(experienceId)) {
@@ -68,7 +69,7 @@ router.delete('/skills/:skillId/experiences/:experienceId', isLoggedIn, (req, re
   }
  
   Experience.findByIdAndRemove(experienceId)
-    .then(() => res.json({ message: `Experience with ${experienceId} is removed successfully.` }))
+    .then(() => res.status(200).json({ message: `Experience with ${experienceId} is removed successfully.` }))
     .catch(error => res.json(error));
 });
 
