@@ -9,31 +9,36 @@ const isLoggedOut= require("../middleware/isLoggedOut");
 
 
 // Create a new experience in DB
-router.post("/experiences",  (req, res, next) => {
-    const {namePosition, description, skill:skillId} = req.body;
+router.post("/experiences", (req, res, next) => {
+  const { namePosition, description, skill: skillId, } = req.body;
 
-    Experience.create({
-        namePosition,
-        description,
-        skill: skillId,
-        owner: req.user._id
+  Experience.create({
+    namePosition,
+    description,
+    skill: skillId,
+    owner: req.session.user
+  }) 
+
+   .then((newExperienceFromDB) => {
+     
+      return Skill.findByIdAndUpdate(skillId, {
+        $push: { experiencesList: newExperienceFromDB._id }
+        
+      });
     })
 
-    .then((newExperienceFromDB) => {
-        return Skill.findByIdAndUpdate(skillId, {
-          $push: { experiencesList: newExperienceFromDB._id }
-        });
-      })
-
-    .then(response => res.json(response))
+    .then(response => res.json (response))
+   
     .catch(err => res.json(err))
+
+    
 })
 
 //Get all experiences from DB
 router.get('/experiences', (req, res, next) => {
   Experience.find()
     .populate('skill')
-    .then(allTheExperiencess => res.json(allTheExperiencess))
+    .then(allTheExperiences => res.json(allTheExperiences))
     .catch(err => res.json(err));
 });
 
