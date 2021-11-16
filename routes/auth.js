@@ -20,7 +20,7 @@ router.get("/loggedin", (req, res) => {
 
 });
 
-router.post("/signup",  (req, res) => {
+router.post("/signup", isLoggedOut, (req, res) => {
   const { email, password } = req.body;
 
   if (!email) {
@@ -28,15 +28,12 @@ router.post("/signup",  (req, res) => {
       .status(400)
       .json({ errorMessage: "Please provide your email." });
   }
-
   if (password.length < 8) {
     return res.status(400).json({
       errorMessage: "Your password needs to be at least 8 characters long.",
     });
   }
 
-  //   ! This use case is using a regular expression to control for special characters and min length
-  
   const regex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 
   if (!regex.test(password)) {
@@ -46,14 +43,12 @@ router.post("/signup",  (req, res) => {
     });
   }
   
-
   // Search the database for a user with the username submitted in the form
   User.findOne({ email }).then((found) => {
     // If the user is found, send the message username is taken
     if (found) {
       return res.status(400).json({ errorMessage: "email already taken." });
     }
-
     // if user is not found, create a new user - start with hashing the password
     return bcrypt
       .genSalt(saltRounds)
@@ -85,7 +80,7 @@ router.post("/signup",  (req, res) => {
   });
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isLoggedOut, (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email) {
@@ -93,7 +88,6 @@ router.post("/login", (req, res, next) => {
       .status(400)
       .json({ errorMessage: "Please provide your email." });
   }
-
   // Here we use the same logic as above
   // - either length based parameters or we check the strength of a password
   if (password.length < 8) {
@@ -101,7 +95,6 @@ router.post("/login", (req, res, next) => {
       errorMessage: "Your password needs to be at least 8 characters long.",
     });
   }
-
   // Search the database for a user with the username submitted in the form
   User.findOne({ email })
     .then((user) => {
@@ -120,7 +113,6 @@ router.post("/login", (req, res, next) => {
         return res.json(user);
       });
     })
-
     .catch((err) => {
       // in this case we are sending the error handling to the error handling middleware that is defined in the error handling file
       // you can just as easily run the res.status that is commented out below
@@ -137,5 +129,6 @@ router.get("/logout", isLoggedIn, (req, res) => {
     res.json({ message: "Done" });
   });
 });
+
 
 module.exports = router;
