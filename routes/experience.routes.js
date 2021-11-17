@@ -6,19 +6,35 @@ const Experience = require("../models/Experience.model ");
 const Skill = require('../models/Skill.model');
 const isLoggedIn = require("../middleware/isLoggedIn");
 const isLoggedOut = require("../middleware/isLoggedOut");
+const fileUploader = require('../config/cloudinary.config');
+
+
+
+//Cloudinary
+router.post('/upload', fileUploader.single('imageUrl'), (req, res, next) => {
+  console.log('file is: ', req.file)
+ 
+  if (!req.file) {
+    next(new Error('No file uploaded!'));
+    return;
+  }
+  res.json({ secure_url: req.file.path });
+});
 
 
 // Create a new experience in DB
 router.post("/experiences", (req, res, next) => {
-  const { namePosition, description, skill: skillId, owner } = req.body;
+  const { namePosition, description, imageUrl, skill: skillId, owner } = req.body;
 
   Experience.create({
     namePosition,
     description,
+    imageUrl,
     skill: skillId,
     owner: req.session.user
   })
     .then((newExperienceFromDB) => {
+      console.log(newExperienceFromDB)
       return Skill.findByIdAndUpdate(skillId, {
         $push: { experiencesList: newExperienceFromDB._id }
       });
@@ -26,6 +42,8 @@ router.post("/experiences", (req, res, next) => {
     .then(response => res.json(response))
     .catch(err => res.json(err))
 })
+
+
 
 //Get all experiences from DB
 router.get('/experiences', (req, res, next) => {

@@ -9,6 +9,10 @@ const experienceSchema = new Schema(
       type: String,
     },
 
+    imageUrl: {
+      type: String,
+    },
+
     skill: {
       type: Schema.Types.ObjectId, ref: "Skill"
     },
