@@ -4,10 +4,11 @@ const mongoose = require('mongoose');
 
 const Skill = require("../models/Skill.model")
 const isLoggedIn = require("../middleware/isLoggedIn");
+const isAdmin=require("../middleware/isAdmin")
 
 
 //Create a new skill in DB
-router.post("/skills", isLoggedIn, (req, res, next) => {
+router.post("/skills", isAdmin, (req, res, next) => {
     const { title, description, experiencesList } = req.body;
     Skill.create({
         title,
