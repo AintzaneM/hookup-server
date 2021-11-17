@@ -5,14 +5,29 @@ const mongoose = require('mongoose');
 const Skill = require("../models/Skill.model")
 const isLoggedIn = require("../middleware/isLoggedIn");
 const isAdmin=require("../middleware/isAdmin")
+const fileUploader=require("../config/cloudinary.config")
 
+
+
+//Cloudinary
+router.post('/upload', fileUploader.single('imageUrl'), (req, res, next) => {
+    console.log('file is: ', req.file)
+   
+    if (!req.file) {
+      next(new Error('No file uploaded!'));
+      return;
+    }
+    res.json({ secure_url: req.file.path });
+  });
+  
 
 //Create a new skill in DB
-router.post("/skills", isAdmin, (req, res, next) => {
-    const { title, description, experiencesList } = req.body;
+router.post("/skills",  (req, res, next) => {
+    const { title, description, imageUrl, experiencesList } = req.body;
     Skill.create({
         title,
         description,
+        imageUrl,
         experiencesList: []
     })
         .then(response => res.status(200).json(response))
