@@ -35,7 +35,7 @@ router.post("/skills", isAdmin, (req, res, next) => {
 })
 
 //Get all the skills from DB
-router.get('/skills', isLoggedIn, (req, res, next) => {
+router.get('/skills',  (req, res, next) => {
     Skill.find()
         .populate("experiencesList")
         .then(allExperiences => res.status(200).json(allExperiences))
@@ -43,7 +43,7 @@ router.get('/skills', isLoggedIn, (req, res, next) => {
 })
 
 //Get specific skill
-router.get('/skills/:skillId', isLoggedIn, (req, res, next) => {
+router.get('/skills/:skillId',  (req, res, next) => {
     const { skillId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(skillId)) {
         res.status(400).json({ message: 'Specified id is not valid' });
