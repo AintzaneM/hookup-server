@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
-
-
-
 const skillSchema = new Schema(
   {
     title: {
@@ -32,5 +29,5 @@ const skillSchema = new Schema(
   }
 );
 
-module.exports = model("Skill", skillSchema);
 
+module.exports = model("Skill", skillSchema);

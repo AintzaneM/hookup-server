@@ -22,7 +22,7 @@ router.post('/upload', fileUploader.single('imageUrl'), (req, res, next) => {
   
 
 //Create a new skill in DB
-router.post("/skills", isAdmin,  (req, res, next) => {
+router.post("/skills", isAdmin, (req, res, next) => {
     const { title, description, imageUrl, experiencesList } = req.body;
     Skill.create({
         title,
@@ -56,7 +56,7 @@ router.get('/skills/:skillId', isLoggedIn, (req, res, next) => {
 });
 
 // Edit a specific experience from DB
-router.put('/skills/:skillId', (req, res, next) => {
+router.put('/skills/:skillId', isLoggedIn, (req, res, next) => {
     const { skillId } = req.params;
   
     if (!mongoose.Types.ObjectId.isValid(skillId)) {
@@ -67,7 +67,6 @@ router.put('/skills/:skillId', (req, res, next) => {
       .then(() => res.status(200).json({ message: `Experience with ${experienceId} is updated successfully.` }))
       .catch(err => res.json(err));
   });
-
 
 
 // Delete a specific experience from DB
