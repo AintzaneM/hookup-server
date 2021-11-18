@@ -22,7 +22,7 @@ router.post('/upload', fileUploader.single('imageUrl'), (req, res, next) => {
   
 
 //Create a new skill in DB
-router.post("/skills",  (req, res, next) => {
+router.post("/skills", isAdmin,  (req, res, next) => {
     const { title, description, imageUrl, experiencesList } = req.body;
     Skill.create({
         title,
@@ -69,7 +69,7 @@ router.put('/skills/:skillId', (req, res, next) => {
   });
 
 
-  
+
 // Delete a specific experience from DB
 router.delete('/skills/:skillId', (req, res, next) => {
     const { skillId } = req.params;

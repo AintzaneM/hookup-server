@@ -21,7 +21,10 @@ router.get("/loggedin", (req, res) => {
 });
 
 router.post("/signup", isLoggedOut, (req, res) => {
-  const { email, password } = req.body;
+  const { email, password ,role } = req.body;
+
+  console.log("reqbody",req.body)
+
 
   if (!email) {
     return res
@@ -54,13 +57,17 @@ router.post("/signup", isLoggedOut, (req, res) => {
       .genSalt(saltRounds)
       .then((salt) => bcrypt.hash(password, salt))
       .then((hashedPassword) => {
+        console.log(">>>>>>",req.body)
         // Create a user and save it in the database
         return User.create({
           email,
           password: hashedPassword,
+          role,
+      
         });
       })
       .then((user) => {
+        console.log("user",user)
         // Bind the user to the session object
         req.session.user = user;
         res.status(201).json(user);
