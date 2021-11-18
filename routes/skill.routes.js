@@ -55,5 +55,32 @@ router.get('/skills/:skillId', isLoggedIn, (req, res, next) => {
         .catch(err => res.json(err));
 });
 
+// Edit a specific experience from DB
+router.put('/skills/:skillId', (req, res, next) => {
+    const { skillId } = req.params;
+  
+    if (!mongoose.Types.ObjectId.isValid(skillId)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
+    Experience.findByIdAndUpdate(skillId, req.body)
+      .then(() => res.status(200).json({ message: `Experience with ${experienceId} is updated successfully.` }))
+      .catch(err => res.json(err));
+  });
+
+
+  
+// Delete a specific experience from DB
+router.delete('/skills/:skillId', (req, res, next) => {
+    const { skillId } = req.params;
+  
+    if (!mongoose.Types.ObjectId.isValid(skillId)) {
+      res.status(400).json({ message: 'Specified id is not valid' });
+      return;
+    }
+    Experience.findByIdAndRemove(skillId)
+      .then(() => res.status(200).json({ message: `Experience with ${skillId} is removed successfully.` }))
+      .catch(error => res.json(error));
+});
 
 module.exports = router;
