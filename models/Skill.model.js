@@ -18,9 +18,6 @@ const skillSchema = new Schema(
     experiencesList: [{
       type: Schema.Types.ObjectId, ref: "Experience"
     }],
-
-    
-
   },
 
   {
